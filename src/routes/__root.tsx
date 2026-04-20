@@ -1,5 +1,6 @@
 import { Outlet, createRootRoute, HeadContent, Scripts } from "@tanstack/react-router";
 import { AuthProvider } from "@/contexts/AuthContext";
+import { SiteContentProvider } from "@/hooks/useSiteContent";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { Toaster } from "sonner";
@@ -34,11 +35,11 @@ export const Route = createRootRoute({
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "MasterBoost — Boost CS 1.6 România #1" },
-      { name: "description", content: "Cea mai rapidă platformă de boost pentru servere Counter-Strike 1.6 din România. Jucători reali, masterserver propriu, activare instantă." },
-      { name: "author", content: "MasterBoost" },
-      { property: "og:title", content: "MasterBoost — Boost CS 1.6 România" },
-      { property: "og:description", content: "Boost-ează serverul tău CS 1.6 cu jucători reali. Activare instantă, prețuri transparente." },
+      { title: "Cs16Radar — Radar Live Servere CS 1.6 România" },
+      { name: "description", content: "Listare gratuită + boost premium pentru servere Counter-Strike 1.6. Radar live, jucători reali, activare instantă." },
+      { name: "author", content: "Cs16Radar" },
+      { property: "og:title", content: "Cs16Radar — Radar CS 1.6 România" },
+      { property: "og:description", content: "Listează gratuit serverul tău CS 1.6 sau alege un boost premium." },
       { property: "og:type", content: "website" },
     ],
     links: [
@@ -69,13 +70,15 @@ function RootShell({ children }: { children: React.ReactNode }) {
 
 function RootComponent() {
   return (
-    <AuthProvider>
-      <Navbar />
-      <main className="pt-16 min-h-screen">
-        <Outlet />
-      </main>
-      <Footer />
-      <Toaster theme="dark" position="top-right" richColors />
-    </AuthProvider>
+    <SiteContentProvider>
+      <AuthProvider>
+        <Navbar />
+        <main className="pt-16 min-h-screen">
+          <Outlet />
+        </main>
+        <Footer />
+        <Toaster theme="dark" position="top-right" richColors />
+      </AuthProvider>
+    </SiteContentProvider>
   );
 }

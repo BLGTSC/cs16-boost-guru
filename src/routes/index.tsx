@@ -4,6 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { PackageCard, type PackageItem } from "@/components/PackageCard";
 import { SectionHeader } from "@/components/SectionHeader";
 import { Countdown } from "@/components/Countdown";
+import { useSiteContent } from "@/hooks/useSiteContent";
 
 export const Route = createFileRoute("/")({
   component: HomePage,
@@ -21,6 +22,7 @@ interface ServerRow {
 }
 
 function HomePage() {
+  const { get } = useSiteContent();
   const [packages, setPackages] = useState<PackageItem[]>([]);
   const [servers, setServers] = useState<ServerRow[]>([]);
 
@@ -37,7 +39,7 @@ function HomePage() {
       .select("id,name,ip,port,players_current,players_max,expires_at,packages(name,color,slug)")
       .eq("status", "active")
       .order("players_current", { ascending: false })
-      .limit(20)
+      .limit(50)
       .then(({ data }) => setServers((data as unknown as ServerRow[]) ?? []));
   }, []);
 
@@ -58,16 +60,15 @@ function HomePage() {
         <div className="relative text-center max-w-3xl">
           <div className="inline-flex items-center gap-2 bg-primary/10 border border-primary/30 text-primary font-mono text-xs px-4 py-1.5 rounded tracking-[2px] uppercase mb-6 animate-fade-up">
             <span className="w-1.5 h-1.5 rounded-full bg-success animate-pulse-dot" style={{ boxShadow: "0 0 6px hsl(var(--success))" }} />
-            ONLINE • Platformă Activă 24/7
+            {get("hero_badge", "ONLINE • Platformă Activă 24/7")}
           </div>
           <h1 className="font-heading text-5xl md:text-7xl lg:text-8xl font-bold leading-[1] mb-5 animate-fade-up" style={{ animationDelay: "0.1s" }}>
-            Boost-ează<br />
-            serverul tău<br />
-            <span className="text-primary glow-text">CS 1.6</span>
+            {get("hero_title_1", "Boost-ează")}<br />
+            {get("hero_title_2", "serverul tău")}<br />
+            <span className="text-primary glow-text">{get("hero_title_3", "CS 1.6")}</span>
           </h1>
-          <p className="text-lg text-text-dim mb-10 font-light animate-fade-up" style={{ animationDelay: "0.2s" }}>
-            Jucători reali, masterserver propriu, activare instantă.<br />
-            Cea mai rapidă platformă de boost din România.
+          <p className="text-lg text-text-dim mb-10 font-light animate-fade-up whitespace-pre-line" style={{ animationDelay: "0.2s" }}>
+            {get("hero_subtitle", "Jucători reali, masterserver propriu, listare gratuită.")}
           </p>
           <div className="flex gap-4 justify-center flex-wrap animate-fade-up" style={{ animationDelay: "0.3s" }}>
             <Link
@@ -75,13 +76,13 @@ function HomePage() {
               className="inline-flex items-center gap-2 bg-primary hover:bg-primary/90 text-primary-foreground font-heading font-bold text-sm uppercase tracking-wider px-7 py-3 rounded transition-all hover:-translate-y-0.5"
               style={{ boxShadow: "var(--shadow-button)" }}
             >
-              🚀 Adaugă Serverul Tău
+              {get("hero_cta_primary", "🚀 Adaugă Serverul Tău")}
             </Link>
             <Link
               to="/packages"
               className="inline-flex items-center gap-2 bg-transparent border border-border text-text-dim hover:text-foreground hover:border-primary/40 hover:bg-primary/10 font-heading font-semibold text-sm uppercase tracking-wider px-7 py-3 rounded transition-all"
             >
-              👁 Vezi Pachetele
+              {get("hero_cta_secondary", "👁 Vezi Pachetele")}
             </Link>
           </div>
         </div>
@@ -104,14 +105,14 @@ function HomePage() {
           <div className="text-xs text-text-muted tracking-[2px] uppercase mt-1">Uptime Garantat</div>
         </div>
         <div className="text-center">
-          <div className="font-heading text-3xl md:text-4xl font-bold text-primary leading-none">RO+EU</div>
-          <div className="text-xs text-text-muted tracking-[2px] uppercase mt-1">MasterServere</div>
+          <div className="font-heading text-3xl md:text-4xl font-bold text-primary leading-none">FREE</div>
+          <div className="text-xs text-text-muted tracking-[2px] uppercase mt-1">Listare Gratuită</div>
         </div>
       </section>
 
       {/* SERVERS LIST */}
       <section className="py-16 px-4 max-w-6xl mx-auto">
-        <SectionHeader label="// Lista Servere" title="Servere în Boost" />
+        <SectionHeader label="// Lista Servere" title="Servere în Radar" />
         <div className="bg-card border border-border rounded-lg overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full border-collapse">
@@ -128,7 +129,7 @@ function HomePage() {
                 {servers.length === 0 ? (
                   <tr>
                     <td colSpan={5} className="px-5 py-8 text-center text-text-muted text-sm">
-                      Niciun server activ momentan. <Link to="/boost" className="text-primary hover:underline">Fii primul!</Link>
+                      Niciun server activ momentan. <Link to="/boost" className="text-primary hover:underline">Adaugă primul gratuit!</Link>
                     </td>
                   </tr>
                 ) : (
@@ -174,10 +175,10 @@ function HomePage() {
         <SectionHeader label="// Proces simplu" title="Cum funcționează?" align="center" />
         <div className="grid md:grid-cols-4 gap-6">
           {[
-            { n: "01", icon: "📦", title: "Alegi Pachetul", desc: "Selectează pachetul potrivit. Basic, Silver, Gold sau Permanent." },
-            { n: "02", icon: "💳", title: "Plătești Simplu", desc: "PayPal instant, transfer bancar sau Revolut. Confirmare rapidă." },
-            { n: "03", icon: "🚀", title: "Boost Activ", desc: "Serverul tău apare în masterserver. Jucătorii se conectează imediat." },
-            { n: "04", icon: "📈", title: "Crești", desc: "Urmărești totul în dashboard. Reînnoiești cu un singur click." },
+            { n: "01", icon: "📦", title: "Alegi Pachetul", desc: "Listare gratuită sau boost premium. Tu decizi." },
+            { n: "02", icon: "📝", title: "Adaugi Serverul", desc: "IP, port, nume — totul în 30 de secunde." },
+            { n: "03", icon: "🚀", title: "Apare în Radar", desc: "Server vizibil instant pe Cs16Radar pentru toți." },
+            { n: "04", icon: "📈", title: "Crești", desc: "Urmărești jucătorii live în dashboard. Reînnoiești oricând." },
           ].map((step) => (
             <div key={step.n} className="relative bg-card border border-border rounded-lg p-7 text-center">
               <div className="absolute top-3 right-4 font-heading text-6xl font-bold text-primary/10 leading-none">

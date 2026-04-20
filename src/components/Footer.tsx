@@ -1,6 +1,10 @@
 import { Link } from "@tanstack/react-router";
+import { useSiteContent } from "@/hooks/useSiteContent";
 
 export function Footer() {
+  const { get } = useSiteContent();
+  const brand = get("brand_name", "Cs16Radar");
+
   return (
     <footer className="bg-card border-t border-border px-4 md:px-8 pt-12 pb-7 mt-16">
       <div className="grid md:grid-cols-3 gap-12 max-w-6xl mx-auto mb-8">
@@ -12,10 +16,13 @@ export function Footer() {
             >
               ⬡
             </div>
-            Master<span className="text-primary">Boost</span>
+            <span>
+              {brand.slice(0, 4)}
+              <span className="text-primary">{brand.slice(4)}</span>
+            </span>
           </div>
           <p className="text-text-dim text-sm leading-relaxed">
-            Platforma #1 de boost pentru servere Counter-Strike 1.6 din România. Jucători reali 24/7.
+            {get("footer_about", "Platforma #1 de listare CS 1.6 din România.")}
           </p>
         </div>
         <div>
@@ -34,14 +41,14 @@ export function Footer() {
             Contact
           </h4>
           <ul className="space-y-2 list-none text-sm">
-            <li className="text-text-muted">📧 contact@masterboost.ro</li>
-            <li className="text-text-muted">💬 Discord</li>
-            <li className="text-text-muted">📘 Facebook</li>
+            <li className="text-text-muted">📧 {get("contact_email", "contact@cs16radar.ro")}</li>
+            <li className="text-text-muted">💬 {get("contact_discord", "Discord")}</li>
+            <li className="text-text-muted">📘 {get("contact_facebook", "Facebook")}</li>
           </ul>
         </div>
       </div>
       <div className="border-t border-border pt-6 text-center text-xs text-text-muted max-w-6xl mx-auto font-mono">
-        © 2025 MasterBoost.ro — Toate drepturile rezervate &nbsp;|&nbsp; Boost CS 1.6 România
+        {get("footer_copyright", `© 2025 ${brand}`)}
       </div>
     </footer>
   );
