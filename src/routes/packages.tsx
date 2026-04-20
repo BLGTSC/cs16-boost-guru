@@ -7,10 +7,10 @@ import { SectionHeader } from "@/components/SectionHeader";
 export const Route = createFileRoute("/packages")({
   head: () => ({
     meta: [
-      { title: "Pachete & Prețuri — MasterBoost" },
-      { name: "description", content: "Pachete de boost pentru CS 1.6: Basic, Silver, Gold și Permanent. Prețuri transparente, fără surprize." },
-      { property: "og:title", content: "Pachete & Prețuri — MasterBoost" },
-      { property: "og:description", content: "Toate pachetele de boost CS 1.6 cu prețuri clare." },
+      { title: "Pachete & Prețuri — Cs16Radar" },
+      { name: "description", content: "Pachete pentru CS 1.6: listare gratuită + boost-uri Basic, Silver, Gold și Permanent. Prețuri transparente." },
+      { property: "og:title", content: "Pachete & Prețuri — Cs16Radar" },
+      { property: "og:description", content: "Listare gratuită sau boost premium pentru serverul tău CS 1.6." },
     ],
   }),
   component: PackagesPage,
