@@ -7,10 +7,10 @@ export const Route = createFileRoute("/server/$id")({
   component: ServerDetailPage,
   head: ({ params }) => ({
     meta: [
-      { title: `Server ${params.id} — MasterBoost` },
-      { name: "description", content: "Detalii server CS 1.6 boost-at: status live, jucători, hartă curentă și conexiune rapidă." },
-      { property: "og:title", content: "Server CS 1.6 — MasterBoost" },
-      { property: "og:description", content: "Conectează-te direct la serverul boost-at." },
+      { title: `Server ${params.id.slice(0, 8)} — Cs16Radar` },
+      { name: "description", content: "Detalii server CS 1.6 listat: status live, jucători, hartă curentă și conexiune Steam." },
+      { property: "og:title", content: "Server CS 1.6 — Cs16Radar" },
+      { property: "og:description", content: "Conectează-te direct la serverul listat pe Cs16Radar." },
     ],
   }),
 });

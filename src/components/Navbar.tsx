@@ -1,5 +1,6 @@
 import { Link, useRouterState } from "@tanstack/react-router";
 import { useAuth } from "@/contexts/AuthContext";
+import { useSiteContent } from "@/hooks/useSiteContent";
 
 const navItems: Array<{ to: string; label: string }> = [
   { to: "/", label: "Acasă" },
@@ -8,7 +9,10 @@ const navItems: Array<{ to: string; label: string }> = [
 
 export function Navbar() {
   const { user, isAdmin, signOut } = useAuth();
+  const { get } = useSiteContent();
   const path = useRouterState({ select: (s) => s.location.pathname });
+
+  const brand = get("brand_name", "Cs16Radar");
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 h-16 px-4 md:px-8 flex items-center justify-between bg-bg-deep/90 backdrop-blur-md border-b border-border">
@@ -19,7 +23,10 @@ export function Navbar() {
         >
           ⬡
         </div>
-        Master<span className="text-primary">Boost</span>
+        <span>
+          {brand.slice(0, 4)}
+          <span className="text-primary">{brand.slice(4)}</span>
+        </span>
       </Link>
 
       <ul className="hidden md:flex items-center gap-1 list-none">
@@ -72,7 +79,7 @@ export function Navbar() {
               className="hidden sm:inline-flex items-center gap-2 px-4 py-2 bg-primary hover:bg-primary/90 text-primary-foreground font-heading font-bold text-sm uppercase tracking-wider rounded transition-all hover:-translate-y-0.5"
               style={{ boxShadow: "var(--shadow-button)" }}
             >
-              🚀 Boost
+              + Server
             </Link>
             <button
               onClick={() => signOut()}

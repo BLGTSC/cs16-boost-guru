@@ -52,38 +52,75 @@ function BoostPage() {
         if (search.pkg) {
           const found = pkgs.find((p) => p.slug === search.pkg);
           if (found) setPackageId(found.id);
+        } else if (pkgs.length > 0) {
+          // Default to FREE if no preselection
+          const free = pkgs.find((p) => p.slug === "free" || Number(p.price) === 0);
+          setPackageId(free?.id ?? pkgs[0].id);
         }
       });
   }, [search.pkg]);
 
+  const selectedPkg = packages.find((p) => p.id === packageId);
+  const isFree = selectedPkg ? Number(selectedPkg.price) === 0 : false;
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (!user || !packageId) return;
+    if (!user || !packageId || !selectedPkg) return;
 
     setSubmitting(true);
-    const pkg = packages.find((p) => p.id === packageId);
-    if (!pkg) {
-      toast.error("Pachet invalid");
-      setSubmitting(false);
-      return;
-    }
 
-    // Validate IP format (basic)
     if (!/^\d{1,3}(\.\d{1,3}){3}$/.test(ip)) {
       toast.error("IP invalid (format: x.x.x.x)");
       setSubmitting(false);
       return;
     }
 
-    // Create server (pending)
+    const portNum = parseInt(port, 10);
+    if (!portNum || portNum < 1 || portNum > 65535) {
+      toast.error("Port invalid (1-65535)");
+      setSubmitting(false);
+      return;
+    }
+
+    // FREE flow → create server already active, no order
+    if (isFree) {
+      const expires = selectedPkg.duration_days
+        ? new Date(Date.now() + selectedPkg.duration_days * 86400 * 1000).toISOString()
+        : null;
+
+      const { error: serverErr } = await supabase
+        .from("servers")
+        .insert({
+          user_id: user.id,
+          package_id: packageId,
+          name: name || `${ip}:${portNum}`,
+          ip,
+          port: portNum,
+          status: "active",
+          activated_at: new Date().toISOString(),
+          expires_at: expires,
+        });
+
+      if (serverErr) {
+        toast.error(serverErr.message);
+        setSubmitting(false);
+        return;
+      }
+
+      toast.success("Server adăugat gratuit! Apare în listă imediat.");
+      setTimeout(() => navigate({ to: "/dashboard" }), 1000);
+      return;
+    }
+
+    // PAID flow → pending server + pending order
     const { data: server, error: serverErr } = await supabase
       .from("servers")
       .insert({
         user_id: user.id,
         package_id: packageId,
-        name: name || `${ip}:${port}`,
+        name: name || `${ip}:${portNum}`,
         ip,
-        port: parseInt(port, 10),
+        port: portNum,
         status: "pending",
       })
       .select()
@@ -95,12 +132,11 @@ function BoostPage() {
       return;
     }
 
-    // Create order
     const { error: orderErr } = await supabase.from("orders").insert({
       user_id: user.id,
       server_id: server.id,
-      package_id: pkg.id,
-      amount: pkg.price,
+      package_id: selectedPkg.id,
+      amount: selectedPkg.price,
       payment_method: paymentMethod,
       status: "pending",
       customer_email: user.email,
@@ -118,7 +154,7 @@ function BoostPage() {
 
   return (
     <section className="py-12 px-4 max-w-2xl mx-auto">
-      <SectionHeader label="// Boost nou" title="Adaugă Serverul Tău" />
+      <SectionHeader label="// Adaugă server" title="Listează Serverul Tău" />
 
       <form
         onSubmit={handleSubmit}
@@ -172,39 +208,45 @@ function BoostPage() {
             <option value="">— Selectează pachet —</option>
             {packages.map((p) => (
               <option key={p.id} value={p.id}>
-                {p.name} — €{p.price} ({p.duration_days ? `${p.duration_days} zile` : "PERMANENT"})
+                {p.name} — {Number(p.price) === 0 ? "GRATUIT" : `€${p.price}`} ({p.duration_days ? `${p.duration_days} zile` : "PERMANENT"})
               </option>
             ))}
           </select>
         </div>
 
-        <div>
-          <label className="block font-mono text-xs tracking-wider uppercase text-text-dim mb-2">Metodă Plată *</label>
-          <div className="grid grid-cols-3 gap-2">
-            {PAYMENT_OPTIONS.map((opt) => {
-              const active = paymentMethod === opt.id;
-              return (
-                <button
-                  type="button"
-                  key={opt.id}
-                  onClick={() => setPaymentMethod(opt.id)}
-                  className={`border rounded p-3 text-center transition-all ${
-                    active ? "border-primary bg-primary/10" : "border-border hover:border-primary/40"
-                  }`}
-                >
-                  <div className="text-xl mb-1">{opt.icon}</div>
-                  <div className="font-heading font-bold text-sm">{opt.name}</div>
-                  <div className="font-mono text-[0.65rem] text-text-muted">{opt.note}</div>
-                </button>
-              );
-            })}
+        {!isFree && (
+          <div>
+            <label className="block font-mono text-xs tracking-wider uppercase text-text-dim mb-2">Metodă Plată *</label>
+            <div className="grid grid-cols-3 gap-2">
+              {PAYMENT_OPTIONS.map((opt) => {
+                const active = paymentMethod === opt.id;
+                return (
+                  <button
+                    type="button"
+                    key={opt.id}
+                    onClick={() => setPaymentMethod(opt.id)}
+                    className={`border rounded p-3 text-center transition-all ${
+                      active ? "border-primary bg-primary/10" : "border-border hover:border-primary/40"
+                    }`}
+                  >
+                    <div className="text-xl mb-1">{opt.icon}</div>
+                    <div className="font-heading font-bold text-sm">{opt.name}</div>
+                    <div className="font-mono text-[0.65rem] text-text-muted">{opt.note}</div>
+                  </button>
+                );
+              })}
+            </div>
           </div>
-        </div>
+        )}
 
-        <div className="bg-primary/10 border border-primary/30 text-primary text-sm p-3 rounded flex items-start gap-2">
-          <span>ℹ️</span>
+        <div className={`border text-sm p-3 rounded flex items-start gap-2 ${
+          isFree ? "bg-success/10 border-success/30 text-success" : "bg-primary/10 border-primary/30 text-primary"
+        }`}>
+          <span>{isFree ? "✅" : "ℹ️"}</span>
           <span>
-            Activarea prin PayPal este instantă. Transfer/Revolut necesită confirmare manuală (max 2h în zilele lucrătoare).
+            {isFree
+              ? "Pachet GRATUIT — serverul tău apare imediat în listă, fără plată."
+              : "Activarea prin PayPal este instantă. Transfer/Revolut necesită confirmare manuală (max 2h)."}
           </span>
         </div>
 
@@ -214,7 +256,7 @@ function BoostPage() {
           className="w-full bg-primary hover:bg-primary/90 disabled:opacity-50 text-primary-foreground font-heading font-bold text-sm uppercase tracking-wider py-3.5 rounded transition-all"
           style={{ boxShadow: "var(--shadow-button)" }}
         >
-          {submitting ? "..." : "🚀 Trimite Comanda"}
+          {submitting ? "..." : isFree ? "✅ Adaugă Gratuit" : "🚀 Trimite Comanda"}
         </button>
       </form>
     </section>
