@@ -30,8 +30,9 @@ export function OrdersTab() {
   useEffect(() => { load(); }, []);
 
   async function setStatus(id: string, status: "paid" | "cancelled" | "failed" | "refunded") {
-    const update: Record<string, unknown> = { status };
-    if (status === "paid") update.paid_at = new Date().toISOString();
+    const update = status === "paid"
+      ? { status, paid_at: new Date().toISOString() }
+      : { status };
     const { error } = await supabase.from("orders").update(update).eq("id", id);
     if (error) return toast.error(error.message);
     toast.success("Comandă actualizată");
@@ -99,15 +100,15 @@ function EditOrderDialog({ order, onClose, onSaved }: { order: AdminOrder; onClo
 
   async function save() {
     setSaving(true);
-    const update: Record<string, unknown> = {
+    const base = {
       amount: Number(form.amount),
       status: form.status as "pending" | "paid" | "failed" | "cancelled" | "refunded",
       payment_method: form.payment_method as "paypal" | "transfer" | "revolut" | "stripe",
       notes: form.notes || null,
     };
-    if (form.status === "paid" && order.status !== "paid") {
-      update.paid_at = new Date().toISOString();
-    }
+    const update = form.status === "paid" && order.status !== "paid"
+      ? { ...base, paid_at: new Date().toISOString() }
+      : base;
     const { error } = await supabase.from("orders").update(update).eq("id", order.id);
     setSaving(false);
     if (error) return toast.error(error.message);
