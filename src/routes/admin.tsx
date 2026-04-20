@@ -8,6 +8,7 @@ import { OrdersTab } from "@/components/admin/OrdersTab";
 import { UsersTab } from "@/components/admin/UsersTab";
 import { PackagesTab } from "@/components/admin/PackagesTab";
 import { ContentTab } from "@/components/admin/ContentTab";
+import { ListingsTab } from "@/components/admin/ListingsTab";
 
 export const Route = createFileRoute("/admin")({
   beforeLoad: async ({ location }) => {
@@ -28,11 +29,12 @@ export const Route = createFileRoute("/admin")({
   component: AdminPage,
 });
 
-type Tab = "stats" | "servers" | "orders" | "users" | "packages" | "content";
+type Tab = "stats" | "servers" | "listings" | "orders" | "users" | "packages" | "content";
 
 const TABS: Array<[Tab, string]> = [
   ["stats", "📊 Statistici"],
-  ["servers", "🖥️ Servere"],
+  ["servers", "🖥️ Servere Boost"],
+  ["listings", "📡 Listări Free"],
   ["orders", "🛒 Comenzi"],
   ["users", "👤 Utilizatori"],
   ["packages", "📦 Pachete"],
@@ -64,6 +66,7 @@ function AdminPage() {
 
       {tab === "stats" && <StatsTab />}
       {tab === "servers" && <ServersTab />}
+      {tab === "listings" && <ListingsTab />}
       {tab === "orders" && <OrdersTab />}
       {tab === "users" && <UsersTab />}
       {tab === "packages" && <PackagesTab />}
