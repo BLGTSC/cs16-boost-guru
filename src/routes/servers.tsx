@@ -198,13 +198,16 @@ function SubmitForm({ onSubmitted }: { onSubmitted: () => void }) {
       });
       if (error) throw error;
 
-      if (info.online) {
-        toast.success(
-          `Server detectat: ${info.hostname ?? ip}. Așteaptă aprobare admin.`,
-        );
-      } else {
-        toast.success("Server trimis. Datele live nu au fost detectate, admin-ul va verifica.");
-      }
+      const sourceLabel: Record<string, string> = {
+        gametracker: "GameTracker",
+        steam: "Steam Web API",
+        fallback: "nume implicit (server neindexat)",
+        none: "necunoscut",
+      };
+      toast.success(
+        `Server adăugat: ${info.hostname ?? `${ip}:${port}`} • sursă: ${sourceLabel[info.source]}. Așteaptă aprobare admin.`,
+        { duration: 6000 },
+      );
       setIp("");
       setPort(27015);
       setEmail("");
