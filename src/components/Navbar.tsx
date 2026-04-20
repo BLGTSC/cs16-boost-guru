@@ -4,6 +4,7 @@ import { useSiteContent } from "@/hooks/useSiteContent";
 
 const navItems: Array<{ to: string; label: string }> = [
   { to: "/", label: "Acasă" },
+  { to: "/servers", label: "Servere" },
   { to: "/packages", label: "Pachete" },
 ];
 
