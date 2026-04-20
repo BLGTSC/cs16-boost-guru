@@ -15,6 +15,7 @@ import { Route as BoostRouteImport } from './routes/boost'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ServerIdRouteImport } from './routes/server.$id'
 
 const PackagesRoute = PackagesRouteImport.update({
   id: '/packages',
@@ -46,6 +47,11 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ServerIdRoute = ServerIdRouteImport.update({
+  id: '/server/$id',
+  path: '/server/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -54,6 +60,7 @@ export interface FileRoutesByFullPath {
   '/boost': typeof BoostRoute
   '/dashboard': typeof DashboardRoute
   '/packages': typeof PackagesRoute
+  '/server/$id': typeof ServerIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -62,6 +69,7 @@ export interface FileRoutesByTo {
   '/boost': typeof BoostRoute
   '/dashboard': typeof DashboardRoute
   '/packages': typeof PackagesRoute
+  '/server/$id': typeof ServerIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -71,12 +79,27 @@ export interface FileRoutesById {
   '/boost': typeof BoostRoute
   '/dashboard': typeof DashboardRoute
   '/packages': typeof PackagesRoute
+  '/server/$id': typeof ServerIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/admin' | '/auth' | '/boost' | '/dashboard' | '/packages'
+  fullPaths:
+    | '/'
+    | '/admin'
+    | '/auth'
+    | '/boost'
+    | '/dashboard'
+    | '/packages'
+    | '/server/$id'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/admin' | '/auth' | '/boost' | '/dashboard' | '/packages'
+  to:
+    | '/'
+    | '/admin'
+    | '/auth'
+    | '/boost'
+    | '/dashboard'
+    | '/packages'
+    | '/server/$id'
   id:
     | '__root__'
     | '/'
@@ -85,6 +108,7 @@ export interface FileRouteTypes {
     | '/boost'
     | '/dashboard'
     | '/packages'
+    | '/server/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -94,6 +118,7 @@ export interface RootRouteChildren {
   BoostRoute: typeof BoostRoute
   DashboardRoute: typeof DashboardRoute
   PackagesRoute: typeof PackagesRoute
+  ServerIdRoute: typeof ServerIdRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -140,6 +165,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/server/$id': {
+      id: '/server/$id'
+      path: '/server/$id'
+      fullPath: '/server/$id'
+      preLoaderRoute: typeof ServerIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -150,16 +182,8 @@ const rootRouteChildren: RootRouteChildren = {
   BoostRoute: BoostRoute,
   DashboardRoute: DashboardRoute,
   PackagesRoute: PackagesRoute,
+  ServerIdRoute: ServerIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { createStart } from '@tanstack/react-start'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-  }
-}

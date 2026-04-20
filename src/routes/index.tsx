@@ -135,7 +135,13 @@ function HomePage() {
                   servers.map((s) => (
                     <tr key={s.id} className="border-b border-border/40 last:border-b-0 hover:bg-bg-hover transition-colors">
                       <td className="px-5 py-3.5">
-                        <div className="font-semibold text-sm">{s.name}</div>
+                        <Link
+                          to="/server/$id"
+                          params={{ id: s.id }}
+                          className="font-semibold text-sm text-foreground hover:text-primary transition-colors"
+                        >
+                          {s.name}
+                        </Link>
                       </td>
                       <td className="px-5 py-3.5 font-mono text-xs text-text-muted">{s.ip}:{s.port}</td>
                       <td className="px-5 py-3.5">

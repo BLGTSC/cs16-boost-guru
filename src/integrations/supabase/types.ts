@@ -156,7 +156,9 @@ export type Database = {
         Row: {
           activated_at: string | null
           created_at: string
+          current_map: string | null
           expires_at: string | null
+          hostname: string | null
           id: string
           ip: string
           name: string
@@ -171,7 +173,9 @@ export type Database = {
         Insert: {
           activated_at?: string | null
           created_at?: string
+          current_map?: string | null
           expires_at?: string | null
+          hostname?: string | null
           id?: string
           ip: string
           name: string
@@ -186,7 +190,9 @@ export type Database = {
         Update: {
           activated_at?: string | null
           created_at?: string
+          current_map?: string | null
           expires_at?: string | null
+          hostname?: string | null
           id?: string
           ip?: string
           name?: string
