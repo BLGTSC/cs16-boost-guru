@@ -18,8 +18,10 @@ interface Props {
   ctaLabel?: string;
 }
 
-export function PackageCard({ pkg, showCta = true, ctaLabel = "Comandă Acum" }: Props) {
+export function PackageCard({ pkg, showCta = true, ctaLabel }: Props) {
   const features = Array.isArray(pkg.features) ? (pkg.features as string[]) : [];
+  const isFree = Number(pkg.price) === 0;
+  const label = ctaLabel ?? (isFree ? "Adaugă Gratuit" : "Comandă Acum");
 
   return (
     <div
@@ -35,6 +37,11 @@ export function PackageCard({ pkg, showCta = true, ctaLabel = "Comandă Acum" }:
           ⭐ Popular
         </div>
       )}
+      {isFree && !pkg.featured && (
+        <div className="absolute -top-px right-6 bg-success text-white font-heading text-xs font-bold tracking-widest uppercase px-3 py-1 rounded-b-md">
+          GRATUIT
+        </div>
+      )}
       <div className="font-heading text-2xl font-bold tracking-wide" style={{ color: pkg.color }}>
         {pkg.name}
       </div>
@@ -42,8 +49,14 @@ export function PackageCard({ pkg, showCta = true, ctaLabel = "Comandă Acum" }:
         {pkg.duration_days ? `${pkg.duration_days} zile` : "∞ Fără expirare"}
       </div>
       <div className="font-heading text-5xl font-bold leading-none mb-1">
-        <sup className="text-lg align-top mt-2 text-text-dim">€</sup>
-        {pkg.price}
+        {isFree ? (
+          <span className="text-success">FREE</span>
+        ) : (
+          <>
+            <sup className="text-lg align-top mt-2 text-text-dim">€</sup>
+            {pkg.price}
+          </>
+        )}
       </div>
       <ul className="my-5 space-y-1.5 flex-1 list-none">
         {features.map((f, i) => (
@@ -59,7 +72,7 @@ export function PackageCard({ pkg, showCta = true, ctaLabel = "Comandă Acum" }:
           search={{ pkg: pkg.slug }}
           className="block text-center bg-primary hover:bg-primary/90 text-primary-foreground font-heading font-bold text-sm uppercase tracking-wider px-4 py-3 rounded transition-all"
         >
-          {ctaLabel}
+          {label}
         </Link>
       )}
     </div>
