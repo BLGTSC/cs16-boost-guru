@@ -14,6 +14,60 @@ export type Database = {
   }
   public: {
     Tables: {
+      listed_servers: {
+        Row: {
+          approved: boolean
+          created_at: string
+          current_map: string | null
+          game_mod: string | null
+          hostname: string | null
+          id: string
+          ip: string
+          last_queried_at: string | null
+          players_current: number
+          players_max: number
+          port: number
+          query_failed: boolean
+          submitted_by_email: string | null
+          submitted_by_user_id: string | null
+          updated_at: string
+        }
+        Insert: {
+          approved?: boolean
+          created_at?: string
+          current_map?: string | null
+          game_mod?: string | null
+          hostname?: string | null
+          id?: string
+          ip: string
+          last_queried_at?: string | null
+          players_current?: number
+          players_max?: number
+          port?: number
+          query_failed?: boolean
+          submitted_by_email?: string | null
+          submitted_by_user_id?: string | null
+          updated_at?: string
+        }
+        Update: {
+          approved?: boolean
+          created_at?: string
+          current_map?: string | null
+          game_mod?: string | null
+          hostname?: string | null
+          id?: string
+          ip?: string
+          last_queried_at?: string | null
+          players_current?: number
+          players_max?: number
+          port?: number
+          query_failed?: boolean
+          submitted_by_email?: string | null
+          submitted_by_user_id?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       orders: {
         Row: {
           amount: number
