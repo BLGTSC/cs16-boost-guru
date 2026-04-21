@@ -77,6 +77,7 @@ export function Navbar() {
           <>
             <Link
               to="/boost"
+              search={{ pkg: "" }}
               className="hidden sm:inline-flex items-center gap-2 px-4 py-2 bg-primary hover:bg-primary/90 text-primary-foreground font-heading font-bold text-sm uppercase tracking-wider rounded transition-all hover:-translate-y-0.5"
               style={{ boxShadow: "var(--shadow-button)" }}
             >
@@ -92,6 +93,7 @@ export function Navbar() {
         ) : (
           <Link
             to="/auth"
+            search={{ redirect: "/dashboard" }}
             className="px-4 py-2 bg-primary hover:bg-primary/90 text-primary-foreground font-heading font-bold text-sm uppercase tracking-wider rounded transition-all"
           >
             Login

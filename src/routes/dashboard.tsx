@@ -76,6 +76,7 @@ function DashboardPage() {
         <SectionHeader label="// Contul meu" title="Dashboard" />
         <Link
           to="/boost"
+          search={{ pkg: "" }}
           className="bg-primary hover:bg-primary/90 text-primary-foreground font-heading font-bold text-sm uppercase tracking-wider px-5 py-2.5 rounded transition-all"
         >
           + Adaugă Server
@@ -86,7 +87,7 @@ function DashboardPage() {
         <Stat value={activeServers} label="Servere Active" />
         <Stat value={orders.length} label="Total Comenzi" />
         <Stat value={`€${totalSpent.toFixed(0)}`} label="Total Cheltuit" />
-        <Link to="/boost" className="bg-card border border-dashed border-primary/40 rounded-lg p-5 text-center flex flex-col justify-center hover:bg-primary/5 transition-colors">
+        <Link to="/boost" search={{ pkg: "" }} className="bg-card border border-dashed border-primary/40 rounded-lg p-5 text-center flex flex-col justify-center hover:bg-primary/5 transition-colors">
           <div className="font-heading text-2xl font-bold text-primary">+</div>
           <div className="text-xs text-text-muted tracking-[2px] uppercase mt-1 font-mono">Server Nou</div>
         </Link>
@@ -97,7 +98,7 @@ function DashboardPage() {
         <h3 className="font-heading text-xl font-bold mb-4">Serverele Mele</h3>
         {servers.length === 0 ? (
           <div className="text-center py-10 text-text-muted text-sm">
-            Nu ai servere încă. <Link to="/boost" className="text-primary hover:underline">Adaugă primul!</Link>
+            Nu ai servere încă. <Link to="/boost" search={{ pkg: "" }} className="text-primary hover:underline">Adaugă primul!</Link>
           </div>
         ) : (
           <div className="overflow-x-auto">

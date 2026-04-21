@@ -73,6 +73,7 @@ function HomePage() {
           <div className="flex gap-4 justify-center flex-wrap animate-fade-up" style={{ animationDelay: "0.3s" }}>
             <Link
               to="/boost"
+              search={{ pkg: "" }}
               className="inline-flex items-center gap-2 bg-primary hover:bg-primary/90 text-primary-foreground font-heading font-bold text-sm uppercase tracking-wider px-7 py-3 rounded transition-all hover:-translate-y-0.5"
               style={{ boxShadow: "var(--shadow-button)" }}
             >
@@ -129,7 +130,7 @@ function HomePage() {
                 {servers.length === 0 ? (
                   <tr>
                     <td colSpan={5} className="px-5 py-8 text-center text-text-muted text-sm">
-                      Niciun server activ momentan. <Link to="/boost" className="text-primary hover:underline">Adaugă primul gratuit!</Link>
+                      Niciun server activ momentan. <Link to="/boost" search={{ pkg: "" }} className="text-primary hover:underline">Adaugă primul gratuit!</Link>
                     </td>
                   </tr>
                 ) : (

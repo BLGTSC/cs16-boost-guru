@@ -248,6 +248,7 @@ function ServerDetailPage() {
         </Link>
         <Link
           to="/boost"
+          search={{ pkg: "" }}
           className="inline-flex items-center gap-2 bg-transparent border border-border text-text-dim hover:text-foreground hover:border-primary/40 hover:bg-primary/10 font-heading font-semibold text-sm uppercase tracking-wider px-5 py-2 rounded transition-all"
         >
           🚀 Boost-ează și tu

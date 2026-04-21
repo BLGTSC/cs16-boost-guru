@@ -32,7 +32,7 @@ export function Footer() {
           <ul className="space-y-2 list-none">
             <li><Link to="/" className="text-text-muted hover:text-primary text-sm transition-colors">Acasă</Link></li>
             <li><Link to="/packages" className="text-text-muted hover:text-primary text-sm transition-colors">Pachete & Prețuri</Link></li>
-            <li><Link to="/boost" className="text-text-muted hover:text-primary text-sm transition-colors">Adaugă Server</Link></li>
+            <li><Link to="/boost" search={{ pkg: "" }} className="text-text-muted hover:text-primary text-sm transition-colors">Adaugă Server</Link></li>
             <li><Link to="/dashboard" className="text-text-muted hover:text-primary text-sm transition-colors">Dashboard</Link></li>
           </ul>
         </div>
