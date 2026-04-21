@@ -1,6 +1,7 @@
 import { Link, useRouterState } from "@tanstack/react-router";
 import { useAuth } from "@/contexts/AuthContext";
 import { useSiteContent } from "@/hooks/useSiteContent";
+import { useNavButtons } from "@/hooks/useNavButtons";
 
 const navItems: Array<{ to: string; label: string }> = [
   { to: "/", label: "Acasă" },
@@ -11,6 +12,7 @@ const navItems: Array<{ to: string; label: string }> = [
 export function Navbar() {
   const { user, isAdmin, signOut } = useAuth();
   const { get } = useSiteContent();
+  const { buttons: customButtons } = useNavButtons();
   const path = useRouterState({ select: (s) => s.location.pathname });
 
   const brand = get("brand_name", "Cs16Radar");
@@ -46,6 +48,31 @@ export function Navbar() {
             </li>
           );
         })}
+        {customButtons.map((btn) => (
+          <li key={btn.id}>
+            {btn.external ? (
+              <a
+                href={btn.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="px-3.5 py-1.5 rounded font-heading font-semibold text-sm uppercase tracking-wider transition-all text-text-dim hover:text-foreground hover:bg-primary/10 inline-block"
+              >
+                {btn.icon && <span className="mr-1">{btn.icon}</span>}
+                {btn.label}
+              </a>
+            ) : (
+              <a
+                href={btn.href}
+                className={`px-3.5 py-1.5 rounded font-heading font-semibold text-sm uppercase tracking-wider transition-all inline-block ${
+                  path === btn.href ? "text-foreground bg-primary/15" : "text-text-dim hover:text-foreground hover:bg-primary/10"
+                }`}
+              >
+                {btn.icon && <span className="mr-1">{btn.icon}</span>}
+                {btn.label}
+              </a>
+            )}
+          </li>
+        ))}
         {user && (
           <li>
             <Link
