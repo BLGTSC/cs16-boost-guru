@@ -9,6 +9,7 @@ import { UsersTab } from "@/components/admin/UsersTab";
 import { PackagesTab } from "@/components/admin/PackagesTab";
 import { ContentTab } from "@/components/admin/ContentTab";
 import { ListingsTab } from "@/components/admin/ListingsTab";
+import { NavButtonsTab } from "@/components/admin/NavButtonsTab";
 
 export const Route = createFileRoute("/admin")({
   beforeLoad: async ({ location }) => {
@@ -29,7 +30,7 @@ export const Route = createFileRoute("/admin")({
   component: AdminPage,
 });
 
-type Tab = "stats" | "servers" | "listings" | "orders" | "users" | "packages" | "content";
+type Tab = "stats" | "servers" | "listings" | "orders" | "users" | "packages" | "content" | "navbuttons";
 
 const TABS: Array<[Tab, string]> = [
   ["stats", "📊 Statistici"],
@@ -39,6 +40,7 @@ const TABS: Array<[Tab, string]> = [
   ["users", "👤 Utilizatori"],
   ["packages", "📦 Pachete"],
   ["content", "📝 Conținut Site"],
+  ["navbuttons", "🔗 Butoane Navbar"],
 ];
 
 function AdminPage() {
@@ -71,6 +73,7 @@ function AdminPage() {
       {tab === "users" && <UsersTab />}
       {tab === "packages" && <PackagesTab />}
       {tab === "content" && <ContentTab />}
+      {tab === "navbuttons" && <NavButtonsTab />}
     </section>
   );
 }
