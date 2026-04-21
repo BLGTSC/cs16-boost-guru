@@ -99,63 +99,65 @@ function stripTags(s: string): string {
 }
 
 function parseGameTrackerHtml(html: string): Omit<GameTrackerInfo, "source"> {
+  // Hostname: <title> e cea mai sigură sursă pe GameTracker.
+  // Format tipic: "CS.PROCS.RO [cs] Counter Strike 1.6"
   let hostname: string | null = null;
-  const ogTitle = html.match(/<meta\s+property="og:title"\s+content="([^"]+)"/i);
-  if (ogTitle) {
-    hostname =
-      decodeEntities(ogTitle[1])
-        .replace(/^Game server\s*[-|]\s*/i, "")
-        .replace(/\s*-\s*GameTracker.*$/i, "")
-        .trim() || null;
+  let game_mod: string | null = null;
+
+  const titleMatch = html.match(/<title>\s*([\s\S]*?)\s*<\/title>/i);
+  if (titleMatch) {
+    const raw = decodeEntities(titleMatch[1]).replace(/\s+/g, " ").trim();
+    // Extragem mod-ul din paranteze drepte: [cs], [zm], [dm] etc.
+    const modBracket = raw.match(/\[([^\]]+)\]/);
+    if (modBracket) game_mod = modBracket[1].trim();
+    // Curățăm: scoatem [tag] și suffix-ul de joc dacă există
+    const cleaned = raw
+      .replace(/\s*\[[^\]]+\]\s*/g, " ")
+      .replace(/\s*Counter[\s-]*Strike(?:\s*1\.6)?\s*$/i, "")
+      .replace(/\s*-\s*GameTracker.*$/i, "")
+      .trim();
+    hostname = cleaned || raw || null;
   }
   if (!hostname) {
-    const h1 = html.match(/<h1[^>]*class="[^"]*HTitle[^"]*"[^>]*>([\s\S]*?)<\/h1>/i);
-    if (h1) hostname = stripTags(h1[1]) || null;
+    const og = html.match(/<meta\s+property="og:title"\s+content="([^"]+)"/i);
+    if (og) hostname = decodeEntities(og[1]).trim() || null;
   }
 
+  // Jucători: <span id="HTML_num_players">3</span> / <span id="HTML_max_players">32</span>
   let players_current = 0;
   let players_max = 0;
-  const playersMatch = html.match(/(\d{1,3})\s*\/\s*(\d{1,3})\s*players?/i);
-  if (playersMatch) {
-    players_current = parseInt(playersMatch[1], 10);
-    players_max = parseInt(playersMatch[2], 10);
-  } else {
-    const cell = html.match(/Current Players[\s\S]*?<td[^>]*>\s*(\d+)\s*\/\s*(\d+)/i);
-    if (cell) {
-      players_current = parseInt(cell[1], 10);
-      players_max = parseInt(cell[2], 10);
+  const cur = html.match(/id=["']HTML_num_players["'][^>]*>\s*(\d+)/i);
+  const max = html.match(/id=["']HTML_max_players["'][^>]*>\s*(\d+)/i);
+  if (cur) players_current = parseInt(cur[1], 10);
+  if (max) players_max = parseInt(max[1], 10);
+  if (!max) {
+    const fallback = html.match(/(\d{1,3})\s*\/\s*(\d{1,3})\s*players?/i);
+    if (fallback) {
+      players_current = parseInt(fallback[1], 10);
+      players_max = parseInt(fallback[2], 10);
     }
   }
 
+  // Mapă curentă: <div class="si_map_header" id="HTML_curr_map">de_dust2</div>
   let current_map: string | null = null;
-  const mapTd = html.match(/Current\s*Map[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i);
-  if (mapTd) {
-    const stripped = stripTags(mapTd[1]);
-    if (stripped && stripped.length < 64) current_map = stripped;
-  }
-  if (!current_map) {
-    const ogDesc = html.match(/<meta\s+property="og:description"\s+content="([^"]+)"/i);
-    if (ogDesc) {
-      const m = ogDesc[1].match(/Map:\s*([^\s,|]+)/i);
-      if (m) current_map = m[1];
-    }
-  }
+  const mapMatch = html.match(
+    /id=["']HTML_curr_map["'][^>]*>\s*([a-zA-Z0-9_\-]+)\s*</i,
+  );
+  if (mapMatch) current_map = mapMatch[1];
 
-  let game_mod: string | null = null;
-  const gameTd = html.match(/Game[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i);
-  if (gameTd) {
-    const stripped = stripTags(gameTd[1]);
-    if (stripped && stripped.length < 64) game_mod = stripped;
-  }
-
-  const online = !!hostname || players_max > 0;
+  // Status: <span class="item_color_success">Alive</span> sau item_color_fail
+  const aliveMatch = html.match(
+    /Status:[\s\S]{0,200}?item_color_(success|fail)["'][^>]*>\s*([A-Za-z]+)/i,
+  );
+  const online =
+    aliveMatch?.[1] === "success" || (!!hostname && players_max > 0);
 
   return {
     hostname,
     current_map,
     players_current,
     players_max,
-    game_mod,
+    game_mod: game_mod || "Counter-Strike",
     online,
   };
 }
