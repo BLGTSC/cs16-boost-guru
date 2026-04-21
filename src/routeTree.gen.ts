@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as StatisticiRouteImport } from './routes/statistici'
 import { Route as ServersRouteImport } from './routes/servers'
 import { Route as PackagesRouteImport } from './routes/packages'
 import { Route as DashboardRouteImport } from './routes/dashboard'
@@ -18,6 +19,11 @@ import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ServerIdRouteImport } from './routes/server.$id'
 
+const StatisticiRoute = StatisticiRouteImport.update({
+  id: '/statistici',
+  path: '/statistici',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ServersRoute = ServersRouteImport.update({
   id: '/servers',
   path: '/servers',
@@ -67,6 +73,7 @@ export interface FileRoutesByFullPath {
   '/dashboard': typeof DashboardRoute
   '/packages': typeof PackagesRoute
   '/servers': typeof ServersRoute
+  '/statistici': typeof StatisticiRoute
   '/server/$id': typeof ServerIdRoute
 }
 export interface FileRoutesByTo {
@@ -77,6 +84,7 @@ export interface FileRoutesByTo {
   '/dashboard': typeof DashboardRoute
   '/packages': typeof PackagesRoute
   '/servers': typeof ServersRoute
+  '/statistici': typeof StatisticiRoute
   '/server/$id': typeof ServerIdRoute
 }
 export interface FileRoutesById {
@@ -88,6 +96,7 @@ export interface FileRoutesById {
   '/dashboard': typeof DashboardRoute
   '/packages': typeof PackagesRoute
   '/servers': typeof ServersRoute
+  '/statistici': typeof StatisticiRoute
   '/server/$id': typeof ServerIdRoute
 }
 export interface FileRouteTypes {
@@ -100,6 +109,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/packages'
     | '/servers'
+    | '/statistici'
     | '/server/$id'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -110,6 +120,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/packages'
     | '/servers'
+    | '/statistici'
     | '/server/$id'
   id:
     | '__root__'
@@ -120,6 +131,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/packages'
     | '/servers'
+    | '/statistici'
     | '/server/$id'
   fileRoutesById: FileRoutesById
 }
@@ -131,11 +143,19 @@ export interface RootRouteChildren {
   DashboardRoute: typeof DashboardRoute
   PackagesRoute: typeof PackagesRoute
   ServersRoute: typeof ServersRoute
+  StatisticiRoute: typeof StatisticiRoute
   ServerIdRoute: typeof ServerIdRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/statistici': {
+      id: '/statistici'
+      path: '/statistici'
+      fullPath: '/statistici'
+      preLoaderRoute: typeof StatisticiRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/servers': {
       id: '/servers'
       path: '/servers'
@@ -203,6 +223,7 @@ const rootRouteChildren: RootRouteChildren = {
   DashboardRoute: DashboardRoute,
   PackagesRoute: PackagesRoute,
   ServersRoute: ServersRoute,
+  StatisticiRoute: StatisticiRoute,
   ServerIdRoute: ServerIdRoute,
 }
 export const routeTree = rootRouteImport
