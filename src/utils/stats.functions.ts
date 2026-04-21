@@ -24,7 +24,6 @@ function num(s: string) {
 export const fetchRedirectStats = createServerFn({ method: "GET" }).handler(async (): Promise<StatsPayload> => {
   const res = await fetch(SOURCE, {
     headers: { "User-Agent": "Cs16Radar-Stats/1.0", "Accept": "text/html" },
-    cf: { cacheTtl: 30, cacheEverything: true } as RequestInit["cf"],
   });
   if (!res.ok) throw new Error(`Source returned ${res.status}`);
   const html = await res.text();
