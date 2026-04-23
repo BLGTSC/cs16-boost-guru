@@ -1,1 +1,7 @@
 project_id = "queawdgpkfvcspcgyrgt"
+
+[functions.gametracker-query]
+verify_jwt = false
+
+[functions.stats-scrape]
+verify_jwt = false
