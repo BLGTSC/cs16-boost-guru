@@ -11,32 +11,41 @@ export const Route = createFileRoute("/statistici")({
       { property: "og:description", content: "Telemetrie live a rețelei de redirect Cs16Radar — total redirecționări, ranking VPS, activitate jucători în timp real." },
     ],
   }),
-  loader: () => fetchRedirectStats(),
   component: StatsPage,
-  errorComponent: ({ error }) => (
-    <div className="py-24 text-center">
-      <h1 className="font-heading text-2xl mb-2">Nu am putut încărca statisticile</h1>
-      <p className="text-text-dim text-sm">{error.message}</p>
-    </div>
-  ),
 });
 
+const EMPTY_STATS: StatsPayload = {
+  totals: { allTime: 0, today: 0, lastHour: 0, nodes: 0 },
+  lastSync: "",
+  chart: { "7": [], "14": [], "30": [] },
+  ranking: [],
+  feed: [],
+};
+
 function StatsPage() {
-  const initial = Route.useLoaderData() as StatsPayload;
-  const [data, setData] = useState<StatsPayload>(initial);
+  const [data, setData] = useState<StatsPayload>(EMPTY_STATS);
   const [range, setRange] = useState<"7" | "14" | "30">("7");
-  const [refreshing, setRefreshing] = useState(false);
+  const [refreshing, setRefreshing] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
 
   useEffect(() => {
-    const id = setInterval(async () => {
-      setRefreshing(true);
+    let active = true;
+    async function pull() {
       try {
         const fresh = await fetchRedirectStats();
+        if (!active) return;
         setData(fresh);
-      } catch { /* noop */ }
-      setRefreshing(false);
-    }, 30_000);
-    return () => clearInterval(id);
+        setLoadError(null);
+      } catch (err) {
+        if (!active) return;
+        setLoadError(err instanceof Error ? err.message : "Eroare necunoscută");
+      } finally {
+        if (active) setRefreshing(false);
+      }
+    }
+    pull();
+    const id = setInterval(pull, 30_000);
+    return () => { active = false; clearInterval(id); };
   }, []);
 
   return (
