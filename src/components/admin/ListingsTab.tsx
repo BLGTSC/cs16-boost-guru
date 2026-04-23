@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { useServerFn } from "@tanstack/react-start";
 import { queryGameTracker } from "@/utils/gametracker.functions";
 import { toast } from "sonner";
 
@@ -21,7 +20,6 @@ interface Listing {
 }
 
 export function ListingsTab() {
-  const queryFn = useServerFn(queryGameTracker);
   const [items, setItems] = useState<Listing[]>([]);
   const [filter, setFilter] = useState<"pending" | "approved" | "all">("pending");
   const [busyId, setBusyId] = useState<string | null>(null);
@@ -65,7 +63,7 @@ export function ListingsTab() {
   async function refresh(item: Listing) {
     setBusyId(item.id);
     try {
-      const info = await queryFn({ data: { ip: item.ip, port: item.port } });
+      const info = await queryGameTracker({ ip: item.ip, port: item.port });
       const { error } = await supabase
         .from("listed_servers")
         .update({

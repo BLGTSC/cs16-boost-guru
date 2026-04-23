@@ -1,7 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { useServerFn } from "@tanstack/react-start";
 import { queryGameTracker } from "@/utils/gametracker.functions";
 import { SectionHeader } from "@/components/SectionHeader";
 import { useAuth } from "@/contexts/AuthContext";
@@ -161,7 +160,6 @@ function ServerRow({ server, rank }: { server: ListedServer; rank: number }) {
 
 function SubmitForm({ onSubmitted }: { onSubmitted: () => void }) {
   const { user } = useAuth();
-  const queryFn = useServerFn(queryGameTracker);
   const [ip, setIp] = useState("");
   const [port, setPort] = useState(27015);
   const [email, setEmail] = useState("");
@@ -182,7 +180,7 @@ function SubmitForm({ onSubmitted }: { onSubmitted: () => void }) {
     }
     setBusy(true);
     try {
-      const info = await queryFn({ data: { ip: ip.trim(), port } });
+      const info = await queryGameTracker({ ip: ip.trim(), port });
       const { error } = await supabase.from("listed_servers").insert({
         ip: ip.trim(),
         port,
